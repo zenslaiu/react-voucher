@@ -1,3 +1,3 @@
 export default class StringGeneratorSettings {
-    codeLength: number = 8;
+    codeLength: number = 12;
 }

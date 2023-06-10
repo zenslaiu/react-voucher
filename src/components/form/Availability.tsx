@@ -30,12 +30,11 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                                     Voucherul este disponibil de la
                                 </label>
                                 <br/>
-                                <Input attributes={{
-                                    type: 'datetime-local',
-                                    className: ['form-control'],
-                                    id: fieldsIDs.voucherIsAvailableFromDate,
-                                    placeholder: 'Voucherul este disponibil de la data de'
-                                }}
+
+                                <input type="datetime-local"
+                                       className={'form-control'}
+                                       id={fieldsIDs.voucherIsAvailableFromDate}
+                                       placeholder={'Voucherul este disponibil de la data de'}
                                 />
                             </div>
                         </div>
@@ -46,12 +45,11 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                                     Voucherul expira la
                                 </label>
                                 <br/>
-                                <Input attributes={{
-                                    type: 'datetime-local',
-                                    className: ['form-control'],
-                                    id: fieldsIDs.voucherExpiresAtDate,
-                                    placeholder: 'Voucherul expira la data de',
-                                }}
+                                <input
+                                    type="datetime-local"
+                                    className="form-control"
+                                    id={fieldsIDs.voucherExpiresAtDate}
+                                    placeholder="Voucherul expira la data de"
                                 />
                             </div>
                         </div>
@@ -63,13 +61,13 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                                     Utilizari maxime
                                 </label>
                                 <br/>
-                                <Input attributes={{
-                                    type: 'input',
-                                    className: ['form-control'],
-                                    id: fieldsIDs.voucherUsagesInThatTimePeriod,
-                                    placeholder: 'Voucherul expira la data de',
-                                    min: vvModel.voucher_usages_in_time_period
-                                }}
+
+                                <input
+                                    type="number"
+                                    className={'form-control'}
+                                    id={fieldsIDs.voucherUsagesInThatTimePeriod}
+                                    placeholder={'Voucherul expira la data de'}
+                                    min={vvModel.voucher_usages_in_time_period}
                                 />
                             </div>
                         </div>
@@ -80,28 +78,27 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                                     Valoarea voucherului
                                 </label>
                                 <br/>
-                                <Input attributes={{
-                                    type: 'number',
-                                    className: ['form-control'],
-                                    id: fieldsIDs.voucherValue,
-                                    placeholder: 'Valoarea voucherului'
-                                }}
+
+                                <input
+                                    type="number"
+                                    className={'form-control'}
+                                    id={fieldsIDs.voucherValue}
+                                    placeholder={'Valoarea voucherului'}
                                 />
                             </div>
                         </div>
 
-                        <div className={'col-4'}>
-                            <div className={'form-check'}>
+                        <div className={' col-4'}>
+                            <div className={' form-check'}>
                                 <br/>
-                                <Input attributes={{
-                                    type: 'checkbox',
-                                    className:['form-check-input'],
-                                    id: fieldsIDs.voucherIsPercentage,
-                                    placeholder: 'voucher_is_percentage'
-                                }}
+
+                                <input
+                                    type="checkbox"
+                                    className={'form-check-input'}
+                                    id={fieldsIDs.voucherIsPercentage}
                                 />
-                                <label className={'form-check-label'} htmlFor={fieldsIDs.voucherIsPercentage}>
-                                    Voucherul este procentual
+                                <label className={' form-check-label'} htmlFor={fieldsIDs.voucherIsPercentage}>
+                                    Valoarea este procentuala
                                 </label>
                             </div>
                         </div>
