@@ -7,11 +7,17 @@ import StringGenerator from "./components/token/Generator/StringGenerator";
 import Availability from "./components/form/Availability";
 
 function App(): React.JSX.Element {
-    const [addUpperCaseLetters, setAddUpperCaseLetters] = useState(false);
-    const [addLowerCaseLetters, setAddLowerCaseLetters] = useState(false);
-    const [addNumbers, setAddNumbers] = useState(false);
 
+    const generatorSettings: StringGeneratorSettings = new StringGeneratorSettings();
     const defaultPairOfCharacters = new DefaultPairOfCharacters();
+
+    const [voucherCodeLength, setVoucherCodeLength] = useState(generatorSettings.codeLength);
+    const [addUpperCaseLetters, setAddUpperCaseLetters] = useState(defaultPairOfCharacters.addUpperCaseCharacters);
+    const [addLowerCaseLetters, setAddLowerCaseLetters] = useState(defaultPairOfCharacters.addLowerCaseCharacters);
+    const [addNumbers, setAddNumbers] = useState(defaultPairOfCharacters.addNumbers);
+    const [disableGenerationOfCode, setToDisableRegenerateVoucherCode] = useState(false);
+
+    generatorSettings.codeLength = voucherCodeLength;
     defaultPairOfCharacters.addUpperCaseCharacters = addUpperCaseLetters;
     defaultPairOfCharacters.addLowerCaseCharacters = addLowerCaseLetters;
     defaultPairOfCharacters.addNumbers = addNumbers;
@@ -30,10 +36,6 @@ function App(): React.JSX.Element {
         />
     ]);
 
-    useEffect(() => {
-
-    })
-
     function addAvailabilityPeriod() {
         // @ts-ignore
         setAvailabilityContent(availabilityContent => [...availabilityContent, [
@@ -50,23 +52,23 @@ function App(): React.JSX.Element {
     }
 
     function generateNewVoucherCode(): string {
-        const generatorSettings: StringGeneratorSettings = new StringGeneratorSettings();
         const generator: StringGenerator = new StringGenerator(defaultPairOfCharacters, generatorSettings);
-        const generatedCode: string = generator.generate();
-        console.log(generatedCode);
-        return generatedCode;
+        return generator.generate();
     }
 
     function regenerateCode(): void {
         const generatedCode: string = generateNewVoucherCode();
-        setCurrentVoucherCode(() => generatedCode);
+        setCurrentVoucherCode(generatedCode);
     }
 
     useEffect(() => {
         regenerateCode();
-    }, [addUpperCaseLetters, addLowerCaseLetters, addNumbers])
+        const allSettingsAreDisabled = addNumbers === false && addLowerCaseLetters === false && addUpperCaseLetters === false;
+        setToDisableRegenerateVoucherCode(allSettingsAreDisabled);
+        // setToAutomaticallyGenerateCode(voucherCodeLength  <= 0);
 
-    // @ts-ignore
+    }, [addUpperCaseLetters, addLowerCaseLetters, addNumbers, voucherCodeLength])
+
     function changeAddUpperCaseLetters() {
         setAddUpperCaseLetters((addUpperCaseLetters: boolean) => !addUpperCaseLetters);
     }
@@ -82,8 +84,19 @@ function App(): React.JSX.Element {
     // @ts-ignore
     function addVoucherToLocalStorage(e) {
         e.preventDefault();
-        console.log(e);
         alert();
+    }
+
+    function addVoucherChars(e: any) {
+
+        let value = e.target.value;
+        const length: number = value.length;
+
+        if (length >= voucherCodeLength) {
+            value = value.substring(e.target.value.length - voucherCodeLength);
+        }
+
+        setCurrentVoucherCode(value);
     }
 
     return (
@@ -92,7 +105,6 @@ function App(): React.JSX.Element {
             <form method='post' onSubmit={addVoucherToLocalStorage}>
                 <div className="container-fluid">
                     <div className="row">
-
                         <div className="card p-0 m-0">
                             <div className="card-header">
                                 <div className="card">
@@ -115,25 +127,30 @@ function App(): React.JSX.Element {
                                                     min: 6,
                                                     max: 15,
                                                     placeholder: 'Lungime cod',
-                                                    defaultValue: 6
+                                                    defaultValue: voucherCodeLength,
+                                                    onChange: ((e: any) => setVoucherCodeLength(e.target.value))
                                                 }}/>
                                             </div>
 
                                             <div className="col-5">
                                                 <label htmlFor="voucher_code">Cod Voucher</label>
-                                                <Input attributes={{
-                                                    type: 'text',
-                                                    className: ['form-control'],
-                                                    id: 'voucher_code',
-                                                    placeholder: 'Cod voucher',
-                                                    defaultValue: currentVoucherCode
-                                                }}
+                                                <input
+                                                    type="text"
+                                                    className={'form-control'}
+                                                    id={'voucher-code'}
+                                                    placeholder={'Cod voucher'}
+                                                    value={currentVoucherCode}
+                                                    onChange={(e) => addVoucherChars(e)}
                                                 />
+                                                <p>
+                                                    Caractere ramase {voucherCodeLength - currentVoucherCode.length}
+                                                </p>
                                             </div>
 
                                             <div className="col-2 justify-content-evenly">
                                                 <div>
                                                     <button type="button" className="btn btn-success btn-sm"
+                                                            disabled={disableGenerationOfCode}
                                                             onClick={regenerateCode}>
                                                         Regenereaza cod
                                                     </button>
@@ -149,7 +166,8 @@ function App(): React.JSX.Element {
                                                             className="form-check-input"
                                                             id="addNumbers"
                                                             name="addNumbers"
-                                                            onClick={changeAddNumbers}
+                                                            checked={addNumbers}
+                                                            onChange={changeAddNumbers}
                                                         />
                                                         <label className="form-check-label" htmlFor="addNumbers">
                                                             Adauga numere
@@ -160,8 +178,9 @@ function App(): React.JSX.Element {
                                                             type="checkbox"
                                                             className="form-check-input"
                                                             id="addUppercaseLetters"
+                                                            checked={addUpperCaseLetters}
                                                             name="addUppercaseLetters"
-                                                            onClick={changeAddUpperCaseLetters}
+                                                            onChange={changeAddUpperCaseLetters}
                                                         />
                                                         <label className="form-check-label"
                                                                htmlFor="addUppercaseLetters"> Adauga Litere mari</label>
@@ -172,8 +191,9 @@ function App(): React.JSX.Element {
                                                             type="checkbox"
                                                             className="form-check-input"
                                                             id="addLowercaseLetters"
+                                                            checked={addLowerCaseLetters}
                                                             name="addLowercaseLetters"
-                                                            onClick={changeAddLowerCaseLetters}
+                                                            onChange={changeAddLowerCaseLetters}
                                                         />
                                                         <label className="form-check-label"
                                                                htmlFor="addLowercaseLetters"> Adauga Litere mici</label>
