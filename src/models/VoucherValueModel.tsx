@@ -2,7 +2,7 @@ export class VoucherValueModel {
 
     // @ts-ignore
 
-    public voucher_id:string;
+    public voucher_id:int;
 
     public voucher_is_available_from_date: string = '';
     // @ts-ignore

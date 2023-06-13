@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import App from './App';
+import VoucherApp from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root: ReactDOM.Root = ReactDOM.createRoot(document.getElementById('root') as Element);
@@ -12,7 +12,7 @@ root.render(
             <div className="container">
                 <div className="row">
                     <div className="col-md-12">
-                        <App/>
+                        <VoucherApp/>
                     </div>
                 </div>
             </div>

@@ -1,22 +1,39 @@
-import Input from "./Input";
-import React from "react";
+
+import React, {useEffect, useState} from "react";
 import {VoucherValueModel} from "../../models/VoucherValueModel";
 
-export default function Availability(vvModel: VoucherValueModel): React.JSX.Element {
+export default function Availability(vv: VoucherValueModel): React.JSX.Element {
 
     const fieldClass: string = 'col-4';
+    const [voucherIsPercentage, setValueIsPercentage] = useState(false);
+    const [voucherValue, setVoucherValue] = useState(0.1);
 
     const fieldsIDs = {
-        voucherIsAvailableFromDate: `voucher_is_available_from_date-${vvModel.voucher_id}`,
-        voucherExpiresAtDate: `voucher_expires_at_date-${vvModel.voucher_id}`,
-        voucherUsagesInThatTimePeriod: `voucher_usages_in_time_period-${vvModel.voucher_id}`,
-        voucherValue: `voucher_value-${vvModel.voucher_id}`,
-        voucherIsPercentage: `voucher_is_percentage-${vvModel.voucher_id}`,
+        voucherIsAvailableFromDate: `voucher_is_available_from_date-${vv.voucher_id}`,
+        voucherExpiresAtDate: `voucher_expires_at_date-${vv.voucher_id}`,
+        voucherUsagesInThatTimePeriod: `voucher_usages_in_time_period-${vv.voucher_id}`,
+        voucherValue: `voucher_value-${vv.voucher_id}`,
+        voucherIsPercentage: `voucher_is_percentage-${vv.voucher_id}`,
     }
 
+    function changeValueIsPercentage() {
+        setValueIsPercentage(isPercentage => !isPercentage);
+    }
 
-    function removeMe() {
+    useEffect(() => {
+        if (voucherIsPercentage && voucherValue > 100) {
+            setVoucherValue(0);
+        }
+    }, [voucherIsPercentage, voucherValue])
 
+    function updateVoucherValue(e: React.ChangeEvent<HTMLInputElement>) {
+        let value:number = parseFloat(e.target.value);
+
+        if (voucherIsPercentage && value > 100) {
+            value = 100;
+        }
+
+        setVoucherValue(value);
     }
 
     return (
@@ -24,17 +41,18 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
             <div className="card-body">
                 <div className="container-fluid">
                     <div className="row pl-0 pr-0">
-                        <div className={'col-4'} data-voucher-id={vvModel.voucher_id}>
+                        <div className={'col-4'} data-voucher-id={vv.voucher_id}>
                             <div>
                                 <label htmlFor={fieldsIDs.voucherIsAvailableFromDate}>
-                                    Voucherul este disponibil de la
+                                    Voucher is available from date
                                 </label>
                                 <br/>
 
                                 <input type="datetime-local"
                                        className={'form-control'}
+                                       name={`voucher_availability[${vv.voucher_id}][start_date]`}
                                        id={fieldsIDs.voucherIsAvailableFromDate}
-                                       placeholder={'Voucherul este disponibil de la data de'}
+                                       placeholder={'Voucher is available from date'}
                                 />
                             </div>
                         </div>
@@ -42,14 +60,15 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                         <div className={'col-4'}>
                             <div>
                                 <label htmlFor={fieldsIDs.voucherExpiresAtDate}>
-                                    Voucherul expira la
+                                    Voucher expires at date
                                 </label>
                                 <br/>
                                 <input
                                     type="datetime-local"
                                     className="form-control"
+                                    name={`voucher_availability[${vv.voucher_id}][expiry_date]`}
                                     id={fieldsIDs.voucherExpiresAtDate}
-                                    placeholder="Voucherul expira la data de"
+                                    placeholder="Voucher expires at date"
                                 />
                             </div>
                         </div>
@@ -58,16 +77,17 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                         <div className={fieldClass}>
                             <div>
                                 <label htmlFor={fieldsIDs.voucherUsagesInThatTimePeriod}>
-                                    Utilizari maxime
+                                    Max usages
                                 </label>
                                 <br/>
 
                                 <input
                                     type="number"
                                     className={'form-control'}
+                                    name={`voucher_availability[${vv.voucher_id}][max_usages]`}
                                     id={fieldsIDs.voucherUsagesInThatTimePeriod}
-                                    placeholder={'Voucherul expira la data de'}
-                                    min={vvModel.voucher_usages_in_time_period}
+                                    placeholder={'Max usages'}
+                                    min={vv.voucher_usages_in_time_period}
                                 />
                             </div>
                         </div>
@@ -75,15 +95,23 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                         <div className={'col-4'}>
                             <div>
                                 <label htmlFor={fieldsIDs.voucherValue}>
-                                    Valoarea voucherului
+                                    Value
                                 </label>
                                 <br/>
 
                                 <input
                                     type="number"
                                     className={'form-control'}
+                                    name={`voucher_availability[${vv.voucher_id}][voucher_value]`}
                                     id={fieldsIDs.voucherValue}
-                                    placeholder={'Valoarea voucherului'}
+                                    placeholder={'Voucher value'}
+                                    {...(voucherIsPercentage && {
+                                        min:0,
+                                        max:100
+                                    })}
+                                    value={voucherValue}
+                                    step={0.01}
+                                    onChange={e => updateVoucherValue(e)}
                                 />
                             </div>
                         </div>
@@ -95,10 +123,12 @@ export default function Availability(vvModel: VoucherValueModel): React.JSX.Elem
                                 <input
                                     type="checkbox"
                                     className={'form-check-input'}
+                                    name={`voucher_availability[${vv.voucher_id}][is_percentage ]`}
                                     id={fieldsIDs.voucherIsPercentage}
+                                    onChange={changeValueIsPercentage}
                                 />
-                                <label className={' form-check-label'} htmlFor={fieldsIDs.voucherIsPercentage}>
-                                    Valoarea este procentuala
+                                <label className={'form-check-label'} htmlFor={fieldsIDs.voucherIsPercentage}>
+                                    Value is percentage (1 to 100)
                                 </label>
                             </div>
                         </div>
